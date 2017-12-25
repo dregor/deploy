@@ -1,0 +1,6 @@
+configs/*
+bases/*
+dumps/*
+log/*
+docker-compose.yml
+!.gitkeep

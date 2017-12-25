@@ -1,0 +1,39 @@
+version: "2"
+services:
+    ${NGINX_DOMAIN}:
+        image: nginx:latest
+        container_name: '${NGINX_DOMAIN}'
+        restart: always
+        depends_on:
+            - ${PHP_DOMAIN} 
+        ports:
+            - "80:80"
+        volumes:
+            - ./log:/log
+            - ./code:/code
+            - ./configs/nginx:/etc/nginx/
+        links:
+            - ${PHP_DOMAIN}
+    ${PHP_DOMAIN}:
+        container_name: '${PHP_DOMAIN}'
+        restart: always
+        build: ./php
+        depends_on:
+            - ${MYSQL_DOMAIN}
+        links:
+            - ${MYSQL_DOMAIN}
+        volumes:
+            - ./code:/code
+    ${MYSQL_DOMAIN}:
+        image: mysql
+        container_name: '${MYSQL_DOMAIN}'
+        env_file:
+            - env
+        restart: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./bases:/var/lib/mysql
+            - ./dumps:/docker-entrypoint-initdb.d
+            - ./log:/var/log
+            - ./scripts:/scripts
